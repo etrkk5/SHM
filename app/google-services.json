@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "911285692735",
+    "firebase_url": "https://shmautowasher.firebaseio.com",
+    "project_id": "shmautowasher",
+    "storage_bucket": "shmautowasher.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:911285692735:android:b6e7afd5f29a01e4",
+        "android_client_info": {
+          "package_name": "projects.etrkk5.shm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "911285692735-k1vte75bb053kfa16p28fud60s8etlgg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "projects.etrkk5.shm",
+            "certificate_hash": "29b02180aeb15b89558f51221964644751a69757"
+          }
+        },
+        {
+          "client_id": "911285692735-sfvs8sbab5ig6iv7cvr4ssf2j1udjku4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDuUyskxOtQnStcvXZJ5bRsOGTDqkDZ7SU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "911285692735-sfvs8sbab5ig6iv7cvr4ssf2j1udjku4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
