@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="projects.etrkk5.shm.SignUpActivity">
+    tools:context="projects.etrkk5.shm.SignUpEmployeeActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -51,6 +51,15 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
                 android:hint="surname"
+                android:inputType="textPersonName"
+                android:paddingBottom="15dp"/>
+
+            <EditText
+                android:id="@+id/editTextBranch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:hint="branch id"
                 android:inputType="textPersonName"
                 android:paddingBottom="15dp"/>
 

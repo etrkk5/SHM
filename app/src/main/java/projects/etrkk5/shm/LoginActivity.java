@@ -11,11 +11,18 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.Objects;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -24,26 +31,53 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     EditText editTextEmail;
     EditText editTextPassword;
     ProgressBar progressBar;
-
     FirebaseAuth mAuth;
+    DatabaseReference mReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user != null) {
+            String uid = user.getUid();
+            FirebaseDatabase.getInstance().getReference().child("isActive").child(uid).child("status").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
 
-        textViewSignUp = (TextView)findViewById(R.id.textViewSignUp);
-        buttonLogin = (Button)findViewById(R.id.buttonLogin);
-        editTextEmail = (EditText)findViewById(R.id.editTextEmail);
-        editTextPassword = (EditText)findViewById(R.id.editTextPassword);
-        progressBar = (ProgressBar)findViewById(R.id.progressbar);
+                    if(Objects.equals(dataSnapshot.getValue(boolean.class), true)) {
+                        Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(LoginActivity.this, "false", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+
+
+        mAuth = FirebaseAuth.getInstance();
+        String uid = mAuth.getCurrentUser().getUid();
+        mReference = FirebaseDatabase.getInstance().getReference().child("isActive").child(uid);
+
+
+        textViewSignUp = (TextView) findViewById(R.id.textViewSignUp);
+        buttonLogin = (Button) findViewById(R.id.buttonLogin);
+        editTextEmail = (EditText) findViewById(R.id.editTextEmail);
+        editTextPassword = (EditText) findViewById(R.id.editTextPassword);
+        progressBar = (ProgressBar) findViewById(R.id.progressbar);
 
         textViewSignUp.setOnClickListener(this);
         buttonLogin.setOnClickListener(this);
-    }
 
+
+    }
     public void userLogin(){
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
@@ -91,8 +125,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
+
+
         if(v.getId() == textViewSignUp.getId()){
-            startActivity(new Intent(this, SignUpActivity.class));
+            startActivity(new Intent(this, ChooseActivity.class));
         }
 
         if(v.getId() == buttonLogin.getId()){

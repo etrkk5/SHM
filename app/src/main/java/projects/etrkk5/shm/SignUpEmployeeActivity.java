@@ -8,60 +8,60 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 
-public class SignUpActivity extends AppCompatActivity implements View.OnClickListener {
-
+public class SignUpEmployeeActivity extends AppCompatActivity implements View.OnClickListener{
 
     EditText editTextName;
     EditText editTextSurname;
+    EditText editTextBranch;
     EditText editTextEmail;
     EditText editTextPassword;
-    TextView textViewLogin;
+    TextView textViewSignUp;
     Button buttonSignUp;
-    ProgressBar progressBar;
-
-    private FirebaseAuth mAuth;
-    private DatabaseReference mDatabaseReference;
-
+    FirebaseFirestore db;
+    FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_up);
+        setContentView(R.layout.activity_sign_up_employee);
 
-        mAuth = FirebaseAuth.getInstance();
 
-        textViewLogin = (TextView)findViewById(R.id.textViewSignUp);
-        buttonSignUp = (Button)findViewById(R.id.buttonSignUp);
         editTextName = (EditText)findViewById(R.id.editTextName);
         editTextSurname = (EditText)findViewById(R.id.editTextSurname);
+        editTextBranch = (EditText)findViewById(R.id.editTextBranch);
         editTextEmail = (EditText)findViewById(R.id.editTextEmail);
         editTextPassword = (EditText)findViewById(R.id.editTextPassword);
-        progressBar = (ProgressBar)findViewById(R.id.progressbar);
+        textViewSignUp = (TextView)findViewById(R.id.textViewSignUp);
+        buttonSignUp = (Button)findViewById(R.id.buttonSignUp);
 
-        textViewLogin.setOnClickListener(this);
         buttonSignUp.setOnClickListener(this);
+        textViewSignUp.setOnClickListener(this);
     }
 
     public void RegisterUser(){
         final String email = editTextEmail.getText().toString().trim();
         final String password = editTextPassword.getText().toString().trim();
         final String name = editTextName.getText().toString().trim();
-        final String surname = editTextSurname.getText().toString().trim();
+        final String branch = editTextBranch.getText().toString().trim();
+
+        db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+
 
         if(email.isEmpty()){
             editTextEmail.setError("Email is required");
@@ -87,9 +87,9 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             return;
         }
 
-        if(surname.isEmpty()){
-            editTextSurname.setError("Surname is required");
-            editTextSurname.requestFocus();
+        if(branch.isEmpty()){
+            editTextBranch.setError("Branch id is required");
+            editTextBranch.requestFocus();
             return;
         }
 
@@ -99,27 +99,29 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             return;
         }
 
-        progressBar.setVisibility(View.VISIBLE);
-
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                progressBar.setVisibility(View.GONE);
                 if(task.isSuccessful()){
 
-                    FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                    FirebaseUser currentUser = mAuth.getCurrentUser();
                     String uid = currentUser.getUid();
 
-                    mDatabaseReference = FirebaseDatabase.getInstance().getReference().child("Users").child(uid);
                     HashMap<String, String> userMap = new HashMap<>();
                     userMap.put("email", email);
                     userMap.put("name", name);
-                    userMap.put("surname",surname);
+                    userMap.put("branch", branch);
+                    userMap.put("status", "true");
+                    userMap.put("uid", uid);
 
-                    mDatabaseReference.setValue(userMap);
+                    db.collection("users").add(userMap).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        @Override
+                        public void onSuccess(DocumentReference documentReference) {
+                        }
+                    });
 
                     Toast.makeText(getApplicationContext(), "User registered succesfully", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(SignUpActivity.this, ProfileActivity.class);
+                    Intent intent = new Intent(SignUpEmployeeActivity.this, ProfileActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                 }else{
@@ -138,11 +140,13 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
         if(v.getId() == buttonSignUp.getId()){
             RegisterUser();
+            startActivity(new Intent(SignUpEmployeeActivity.this, ProfileActivity.class));
         }
 
-        if(v.getId() == textViewLogin.getId()){
-            startActivity(new Intent(this, LoginActivity.class));
+        if(v.getId() == textViewSignUp.getId()){
+            startActivity(new Intent(SignUpEmployeeActivity.this, LoginActivity.class));
         }
+
 
     }
 }
